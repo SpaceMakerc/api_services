@@ -1,20 +1,30 @@
 from rest_framework import serializers
 
-from interview.models import Question, Answer
 from datetime import datetime
+
+from interview.models import Question, Answer
 
 
 class QuestionsSerializer(serializers.ModelSerializer):
+    def validate(self, data):
+        try:
+            new_date = datetime.fromisoformat(data)
+        except TypeError:
+            raise serializers.ValidationError(
+                detail="Date field should be 'YYYY-MM-DD' type or None"
+            )
+        return data
+
     class Meta:
         model = Question
         fields = ("id", "text", "created_at")
-
-    def validate_text(self, value):
-        if len(value) == 0:
-            raise serializers.ValidationError(
-                detail="The field text should be filled"
-            )
-        return value
+        extra_kwargs = {
+            "text": {
+                "error_messages": {
+                    "required": "Question field cannot be empty",
+                },
+            },
+        }
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -23,16 +33,9 @@ class AnswerSerializer(serializers.ModelSerializer):
         fields = ("id", "question_id", "text", "created_at", "user_id")
 
 
-class QuestionSerializer(serializers.ModelSerializer):
+class QuestionSerializer(QuestionsSerializer):
     answers = AnswerSerializer(many=True, read_only=True)
 
-    class Meta:
+    class Meta(QuestionsSerializer.Meta):
         model = Question
         fields = ("id", "text", "created_at", "answers")
-
-    def validate_text(self, value):
-        if len(value) == 0:
-            raise serializers.ValidationError(
-                detail="The field text should be filled"
-            )
-        return value

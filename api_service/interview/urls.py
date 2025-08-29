@@ -4,6 +4,6 @@ from interview import views
 
 
 urlpatterns = [
-    path("questions/", views.api_questions),
-    path("questions/<int:pk>/", views.api_question_detail)
+    path("questions/", views.APIQuestions.as_view()),
+    path("questions/<int:pk>/", views.APIQuestion.as_view())
 ]

@@ -9,6 +9,9 @@ class Question(models.Model):
     text = models.TextField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.pk
+
     class Meta:
         db_table = "questions"
 
