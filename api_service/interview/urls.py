@@ -1,8 +1,9 @@
 from django.urls import path
 
-from interview.views import *
+from interview import views
 
 
 urlpatterns = [
-    path("", index, name="index_page")
+    path("questions/", views.api_questions),
+    path("questions/<int:pk>/", views.api_question_detail)
 ]

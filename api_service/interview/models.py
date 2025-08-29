@@ -1,22 +1,28 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+
+import uuid
 
 # Create your models here.
-
-
-class CustomUser(AbstractUser):
-    ...
 
 
 class Question(models.Model):
     text = models.TextField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = "questions"
+
 
 class Answer(models.Model):
     question_id = models.ForeignKey(
-        "Question", null=False, on_delete=models.CASCADE
+        "Question",
+        null=False,
+        on_delete=models.CASCADE,
+        related_name="answers"
     )
-    user_id = models.ForeignKey("CustomUser", null=False, on_delete=models.CASCADE)
     text = models.TextField(null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    user_id = models.UUIDField(default=uuid.uuid4(), null=False)
+
+    class Meta:
+        db_table = "answers"
