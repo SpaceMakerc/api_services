@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils.timezone import now
 import uuid
 
 # Create your models here.
@@ -7,7 +7,7 @@ import uuid
 
 class Question(models.Model):
     text = models.TextField(null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=now())
 
     def __str__(self):
         return self.pk
@@ -24,7 +24,7 @@ class Answer(models.Model):
         related_name="answers"
     )
     text = models.TextField(null=False, blank=False)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=now())
     user_id = models.UUIDField(default=uuid.uuid4(), null=False)
 
     class Meta:
