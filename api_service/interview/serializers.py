@@ -1,7 +1,4 @@
 from rest_framework import serializers
-from django.shortcuts import get_object_or_404
-
-from uuid import UUID
 
 from interview.models import Question, Answer
 
