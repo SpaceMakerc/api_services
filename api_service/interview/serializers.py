@@ -17,13 +17,6 @@ class QuestionsSerializer(serializers.ModelSerializer):
 
 
 class AnswerSerializer(serializers.ModelSerializer):
-    def validate(self, attrs):
-        if "user_id" not in attrs:
-            raise serializers.ValidationError(
-                "user_id field cannot be empty"
-            )
-        return attrs
-
     class Meta:
         model = Answer
         fields = ("id", "question_id", "text", "created_at", "user_id")
@@ -33,6 +26,16 @@ class AnswerSerializer(serializers.ModelSerializer):
                     "required": "Question field cannot be empty",
                 },
             },
+            "user_id": {
+                "error_messages": {
+                    "required": "user_id field cannot be empty",
+                },
+            },
+            "question_id": {
+                "error_messages": {
+                    "required": "user_id field cannot be empty",
+                },
+            }
         }
 
 

@@ -56,7 +56,11 @@ class APIQuestion(APIView):
 class APIAnswers(APIView):
     def post(self, request, id):
         get_object_or_404(Question, pk=id)
-        serializer = AnswerSerializer(data=request.data)
+        request_data = {}
+        for key, value in request.data.items():
+            request_data[key] = value
+        request_data["question_id"] = id
+        serializer = AnswerSerializer(data=request_data)
         if serializer.is_valid():
             serializer.save()
             return Response(

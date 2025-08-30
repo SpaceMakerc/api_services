@@ -25,7 +25,7 @@ class Answer(models.Model):
     )
     text = models.TextField(null=False, blank=False)
     created_at = models.DateTimeField(default=now())
-    user_id = models.UUIDField(default=uuid.uuid4(), null=False)
+    user_id = models.UUIDField(null=False)
 
     class Meta:
         db_table = "answers"
