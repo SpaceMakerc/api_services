@@ -13,6 +13,9 @@ from interview.serializers import (
 
 
 class APIQuestions(APIView):
+    """
+    Обработчик /questions/ GET/POST
+    """
     def get(self, request):
         questions = Question.objects.all()
         serializer = QuestionsSerializer(questions, many=True)
@@ -33,6 +36,9 @@ class APIQuestions(APIView):
 
 
 class APIQuestion(APIView):
+    """
+    Обработчик /questions/{id} GET/DELETE
+    """
     def get(self, request, id):
         question = get_object_or_404(Question, pk=id)
         serializer = QuestionSerializer(question)
@@ -54,6 +60,9 @@ class APIQuestion(APIView):
 
 
 class APIAnswers(APIView):
+    """
+    Обработчик /questions/{id}/answers/ POST
+    """
     def post(self, request, id):
         get_object_or_404(Question, pk=id)
         request_data = {}
@@ -72,6 +81,9 @@ class APIAnswers(APIView):
 
 
 class APIAnswer(APIView):
+    """
+    Обработчик /answers/{id} GET/DELETE
+    """
     def get(self, request, id):
         answer = get_object_or_404(Answer, pk=id)
         serializer = AnswerSerializer(answer)

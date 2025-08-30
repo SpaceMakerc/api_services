@@ -89,7 +89,7 @@ DATABASES = {
         'NAME': os.getenv('DATABASE_NAME'),
         'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
+        'HOST': "pgdb",  #  Наименование контейнера для базы данных в Docker Compose os.getenv('DATABASE_HOST'),
         'PORT': os.getenv('DATABASE_PORT'),
     }
 }

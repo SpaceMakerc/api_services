@@ -4,6 +4,9 @@ from interview.models import Question, Answer
 
 
 class QuestionsSerializer(serializers.ModelSerializer):
+    """
+    Serializer для Questions
+    """
     class Meta:
         model = Question
         fields = ("id", "text", "created_at")
@@ -17,6 +20,9 @@ class QuestionsSerializer(serializers.ModelSerializer):
 
 
 class AnswerSerializer(serializers.ModelSerializer):
+    """
+    Serializer для Answers
+    """
     class Meta:
         model = Answer
         fields = ("id", "question_id", "text", "created_at", "user_id")
@@ -40,6 +46,9 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 
 class QuestionSerializer(QuestionsSerializer):
+    """
+    Serializer, включающий nested serializer для двух моделей Question, и Answer
+    """
     answers = AnswerSerializer(many=True, read_only=True)
 
     class Meta(QuestionsSerializer.Meta):
