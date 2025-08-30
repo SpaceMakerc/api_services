@@ -69,9 +69,10 @@ created_at: datetime
 
 <img width="1830" height="927" alt="image" src="https://github.com/user-attachments/assets/91934997-70d7-4d78-9e06-0ded5ce696d4" />
 
-**запуска сервиса**
+**Запуска сервиса**
 
 Первоначально нужно создать файл *.env в корне проекта, в нём указать следующие данные:
+
 secret_key=ключ к приложению
 
 DATABASE_NAME=наименование базы
