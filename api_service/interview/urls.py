@@ -16,5 +16,8 @@ urlpatterns = [
         "questions/<int:id>/answers/", views.APIAnswers.as_view(),
         name="post_answer"
     ),
-    path("answers/<int:id>/", views.APIAnswer.as_view())
+    path(
+        "answers/<int:id>", views.APIAnswer.as_view(),
+        name="get_delete_answer"
+    )
 ]

@@ -127,7 +127,7 @@ class QuestionsGetDeleteAPITestCase(APITestCase):
         Попытка удалить вопрос с ответами по несуществующему id
         """
         response = self.client.delete(self.incorrect_url)
-        self.assertTrue(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
 class AnswersPostAPITestCase(APITestCase):
@@ -154,4 +154,112 @@ class AnswersPostAPITestCase(APITestCase):
         }
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(Answer.objects.filter(text="Test answer").exists())
 
+    def test_post_few_answers_to_one_question(self):
+        """
+        Отправка нескольких ответов к одному вопросу
+        """
+        answer = {
+            "text": "Test answer",
+            "user_id": "123e4567-e89b-12d3-a456-426614174011",
+        }
+        second_answer = {
+            "text": "Test answer2",
+            "user_id": "123e4567-e89b-12d3-a456-426614174011",
+        }
+        first_response = self.client.post(self.url, answer)
+        second_response = self.client.post(self.url, second_answer)
+
+        self.assertEqual(first_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(second_response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(len(Answer.objects.all()), 2)
+
+    def test_post_answer_with_empty_text(self):
+        """
+        Попытка добавить ответ без текста
+        """
+        data = {
+            "user_id": "123e4567-e89b-12d3-a456-426614174011",
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue(
+            response.data["text"][0] == "Question field cannot be empty"
+        )
+
+    def test_post_answer_with_empty_user_id(self):
+        """
+        Попытка добавить ответ без user_id
+        """
+        data = {
+            "text": "Test answer",
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertTrue(
+            response.data["user_id"][0] == "user_id field cannot be empty"
+        )
+
+    def test_post_answer_with_wrong_created_at(self):
+        """
+        Попытка добавить ответ с некорректным created_at
+        """
+        data = {
+            "text": "Test answer",
+            "user_id": "123e4567-e89b-12d3-a456-426614174011",
+            "created_at": "12-12-2025"
+        }
+        response = self.client.post(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class AnswersGetDeleteAPITestCase(APITestCase):
+    """
+    questions/id/answers/
+    """
+
+    """
+    Инициализируем тестовый вопрос, ответ, а также путь для обращения
+    """
+    def setUp(self):
+        self.test_question = Question.objects.create(text="Test question")
+        self.test_answer = Answer.objects.create(
+            question_id=self.test_question,
+            text="Test answer",
+            user_id="16763be4-6022-406e-a950-fcd5018633ca"
+        )
+        self.url = reverse(
+            "get_delete_answer", kwargs={"id": self.test_answer.pk}
+        )
+
+    def test_get_answer(self):
+        """
+        Получить ответ по id
+        """
+        response = self.client.get(self.url)
+        self.assertContains(response, "Test answer")
+
+    def test_get_answer_with_non_existent_answer_id(self):
+        """
+        Попытка получить ответ по несуществующему ID
+        """
+        Answer.delete(self.test_answer)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_answer(self):
+        """
+        Удаление ответа по ID
+        """
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(Answer.objects.filter(text="Test answer").exists())
+
+    def test_do_not_delete_answer_by_id(self):
+        """
+        Попытка удаления ответа по несуществующему ID
+        """
+        Answer.delete(self.test_answer)
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
